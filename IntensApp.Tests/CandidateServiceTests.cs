@@ -22,10 +22,10 @@ namespace IntensApp.Tests
                 Email = "jovan@gmail.com",
                 ContactNumber = "061222333",
                 CandidateSkills = new List<CandidateSkill>
-        {
-            new CandidateSkill { Skill = new Skill { Name = "  C#  " } },
-            new CandidateSkill { Skill = new Skill { Name = "" } } 
-        }
+                {
+                    new CandidateSkill { Skill = new Skill { Name = "  C#  " } },
+                    new CandidateSkill { Skill = new Skill { Name = "" } } 
+                }
             };
 
             var result = await service.AddCandidateAsync(candidate);
@@ -35,7 +35,6 @@ namespace IntensApp.Tests
             Assert.Equal("C#", candidate.CandidateSkills.First().Skill.Name);
             mockRepo.Verify(r => r.AddCandidateAsync(candidate), Times.Once);
         }
-
 
         [Fact]
         public async Task UpdateCandidateAsync_ShouldUpdateSkills_CaseInsensitive()
@@ -62,7 +61,7 @@ namespace IntensApp.Tests
             var updated = await service.UpdateCandidateAsync(1, dto);
 
             Assert.NotNull(updated);
-            Assert.Contains(updated!.CandidateSkills, cs => cs.Skill.Name == "Java");
+            Assert.Contains(updated.CandidateSkills, cs => cs.Skill.Name == "Java");
             Assert.Contains(updated.CandidateSkills, cs => cs.Skill.Name == "C#");
             Assert.Equal(2, updated.CandidateSkills.Count);
         }
@@ -76,11 +75,12 @@ namespace IntensApp.Tests
             {
                 Id = 1,
                 CandidateSkills = new List<CandidateSkill>
-        {
-            new CandidateSkill { Skill = skill }
-        }
+                {
+                    new CandidateSkill { Skill = skill }
+                }
             };
             mockRepo.Setup(r => r.GetCandidateAsync(1)).ReturnsAsync(candidate);
+            // also here candidate may not exist
 
             mockRepo.Setup(r => r.DeleteCandidateSkillAsync(It.IsAny<CandidateSkill>()))
                     .Callback<CandidateSkill>(cs => candidate.CandidateSkills.Remove(cs))
@@ -89,6 +89,7 @@ namespace IntensApp.Tests
             var service = new CandidateService(mockRepo.Object);
 
             var result = await service.DeleteCandidateSkillAsync(1, "python");
+            // we can add some failure test with data that does not exist
 
             Assert.True(result.CandidateExists);
             Assert.True(result.SkillDeleted);

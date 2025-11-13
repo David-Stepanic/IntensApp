@@ -20,7 +20,7 @@ namespace IntensApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddCandidate([FromBody] CandidateCreateDto dto)
+        public async Task<ActionResult> AddCandidate(CandidateCreateDto dto)
         {
             if (dto.DateOfBirth > DateTime.UtcNow)
                 return BadRequest("Invalid date of birth.");
@@ -52,7 +52,7 @@ namespace IntensApp.Controllers
         public async Task<ActionResult<List<Candidate>>> GetAllCandidatesAsync()
         {
             var candidates = await _candidateService.GetAllCandidatesAsync();
-            if (candidates.Count == 0)
+            if (candidates.Count == 0 || !candidates.Any())
                 return NotFound("No candidates found.");
 
             var dtos = _mapper.Map<List<CandidateReadDto>>(candidates);
@@ -73,7 +73,7 @@ namespace IntensApp.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<Candidate>> UpdateCandidateAsync(int id, [FromBody] CandidateUpdateDto dto)
+        public async Task<ActionResult<Candidate>> UpdateCandidateAsync(int id, CandidateUpdateDto dto)
         {
             if (dto.DateOfBirth > DateTime.UtcNow)
                 return BadRequest("Invalid date of birth.");
@@ -97,8 +97,11 @@ namespace IntensApp.Controllers
         }
 
         [HttpDelete("skill/{id}")]
-        public async Task<IActionResult> DeleteCandidateSkill(int id, [FromBody] string skillName)
+        public async Task<IActionResult> DeleteCandidateSkill(int id, string skillName)
         {
+            if (string.IsNullOrWhiteSpace(skillName))
+                return BadRequest("Skill name is required.");
+
             var (candidateExists, skillDeleted) = await _candidateService.DeleteCandidateSkillAsync(id, skillName);
 
             if (!candidateExists)

@@ -32,7 +32,6 @@ namespace IntensApp.Services
                 .Select(g => g.First())
                 .ToList();
         }
-
         public async Task<bool> AddCandidateAsync(Candidate candidate)
         {
             NormalizeCandidate(candidate);
@@ -45,12 +44,9 @@ namespace IntensApp.Services
                 var skill = await _candidateRepository.GetSkillByNameAsync(candidateSkill.Skill.Name);
                 if (skill == null)
                 {
-                    if (!await _candidateRepository.SkillExistsAsync(candidateSkill.Skill.Name))
-                    {
-                        var newSkill = new Skill { Name = candidateSkill.Skill.Name };
-                        await _candidateRepository.AddSkillAsync(newSkill);
-                        skill = newSkill;
-                    }
+                    var newSkill = new Skill { Name = candidateSkill.Skill.Name };
+                    await _candidateRepository.AddSkillAsync(newSkill);
+                    skill = newSkill;
                 }
                 candidateSkill.SkillId = skill!.Id;
                 candidateSkill.Skill = skill;

@@ -28,16 +28,10 @@ namespace IntensApp.Repositories
         {
             await _context.Skills.AddAsync(skill);
         }
-        public async Task<bool> SkillExistsAsync(string skillName)
-        {
-            return await _context.Skills
-                .AnyAsync(s => s.Name.ToLower().Trim() == skillName.ToLower().Trim());
-        }
 
         public async Task AddCandidateAsync(Candidate candidate)
         {
             await _context.Candidates.AddAsync(candidate);
-            await _context.SaveChangesAsync();
         }
         public async Task<Candidate?> GetCandidateAsync(int id)
         {
@@ -53,7 +47,6 @@ namespace IntensApp.Repositories
                  .ThenInclude(cs => cs.Skill)
                  .ToListAsync();
         }
-        
         public Task DeleteCandidateAsync(Candidate candidate)
         {
             _context.Candidates.Remove(candidate);
@@ -74,6 +67,7 @@ namespace IntensApp.Repositories
 
             if(!string.IsNullOrWhiteSpace(name))
                 query = query.Where(c => c.FullName.ToLower().Contains(name.ToLower()));
+            // allows us to add where condition because of queryable
 
             if(skills != null && skills.Count > 0)
             {

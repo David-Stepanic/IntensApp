@@ -6,7 +6,6 @@ namespace IntensApp.Repositories
     {
         public Task AddCandidateAsync(Candidate candidate);
         public Task AddSkillAsync(Skill skill);
-        public Task<bool> SkillExistsAsync(string skillName);
         public Task<Skill?> GetSkillByNameAsync(string SkillName);
         public Task<bool> CandidateExistsAsync(string email);
         public Task<Candidate?> GetCandidateAsync(int id);
